@@ -255,44 +255,60 @@ function addProd() {
   d.className = 'prod-card';
   d.id = 'pd-' + i;
 
-  var html = '';
-  html += '<span class="prod-num" id="pn-' + i + '">#01</span>';
-  html += '<button type="button" class="btn-rm" data-idx="' + i + '">x</button>';
-  html += '<div class="search-wrap" style="margin-bottom:14px">';
-  html += '<label>Insumo / Producto</label>';
-  html += '<input class="search-inp" id="pi-' + i + '" placeholder="Escribi para buscar..." autocomplete="off"/>';
-  html += '<div class="drop" id="dr-' + i + '"></div>';
-  html += '</div>';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px">';
-  html += '<div><label style="margin-bottom:6px">Cargado (L/kg)</label>';
-  html += '<input type="tel" id="pc-' + i + '" placeholder="0.00" data-idx="' + i + '" class="inp-car" style="width:100%;background:#fff;border:2px solid #16a34a;border-radius:8px;padding:12px 14px;font-family:Inter,sans-serif;font-size:16px;color:#111827;-webkit-appearance:none"/></div>';
-  html += '<div><label style="margin-bottom:6px">Utilizado (L/kg)</label>';
-  html += '<input type="tel" id="pu-' + i + '" placeholder="0.00" data-idx="' + i + '" class="inp-uti" style="width:100%;background:#fff;border:2px solid #16a34a;border-radius:8px;padding:12px 14px;font-family:Inter,sans-serif;font-size:16px;color:#111827;-webkit-appearance:none"/></div>';
-  html += '<div><label style="margin-bottom:6px">Diferencia</label>';
-  html += '<div class="diff-display" id="pd-' + i + '" style="font-size:16px;font-weight:700;border:2px solid #e5e7eb">-</div></div>';
-  html += '</div>';
-  d.innerHTML = html;
+  var html2 = '';
+  html2 += '<span class="prod-num" id="pn-' + i + '">#01</span>';
+  html2 += '<button type="button" class="btn-rm" data-idx="' + i + '">x</button>';
 
+  // BUSCADOR - seccion separada
+  html2 += '<div style="margin-bottom:16px">';
+  html2 += '<label>Insumo / Producto</label>';
+  html2 += '<input id="pi-' + i + '" placeholder="Escribi para buscar..." autocomplete="off"';
+  html2 += ' style="width:100%;background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 14px;font-size:14px;font-family:Inter,sans-serif;color:#111827"/>';
+  html2 += '<div id="dr-' + i + '" style="display:none;position:absolute;left:0;right:0;background:#fff;border:1.5px solid #16a34a;border-radius:8px;max-height:180px;overflow-y:auto;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.15);"></div>';
+  html2 += '</div>';
+
+  // CANTIDADES - seccion completamente separada, sin ningun dropdown cerca
+  html2 += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">';
+  html2 += '<div>';
+  html2 += '<label>Cargado</label>';
+  html2 += '<input id="pc-' + i + '" data-idx="' + i + '" placeholder="0.00"';
+  html2 += ' style="width:100%;background:#fff;border:2px solid #86efac;border-radius:8px;padding:12px;font-size:16px;font-family:Inter,sans-serif;color:#111827"/>';
+  html2 += '</div>';
+  html2 += '<div>';
+  html2 += '<label>Utilizado</label>';
+  html2 += '<input id="pu-' + i + '" data-idx="' + i + '" placeholder="0.00"';
+  html2 += ' style="width:100%;background:#fff;border:2px solid #86efac;border-radius:8px;padding:12px;font-size:16px;font-family:Inter,sans-serif;color:#111827"/>';
+  html2 += '</div>';
+  html2 += '<div>';
+  html2 += '<label>Diferencia</label>';
+  html2 += '<div id="pd-' + i + '" style="background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;padding:12px;font-size:16px;font-weight:700;text-align:center;color:#9ca3af">-</div>';
+  html2 += '</div>';
+  html2 += '</div>';
+
+  d.innerHTML = html2;
+  d.style.position = 'relative';
   document.getElementById('prods-wrap').appendChild(d);
 
-  // Events
-  d.querySelector('.btn-rm').addEventListener('click', function() {
-    rmProd(parseInt(this.getAttribute('data-idx')));
+  // Eventos buscador - solo input, sin blur
+  document.getElementById('pi-' + i).addEventListener('input', function() {
+    mostrarOpciones(i);
   });
-  document.getElementById('pi-' + i).addEventListener('input', function() { filtrar(i); });
-  document.getElementById('pi-' + i).addEventListener('focus', function() { filtrar(i); });
-  // Cerrar dropdown solo si el foco sale FUERA de la tarjeta completa
-  d.addEventListener('focusout', function(e) {
-    if (!d.contains(e.relatedTarget)) {
-      var dr = document.getElementById('dr-' + i);
-      if (dr) dr.classList.remove('open');
-    }
+  document.getElementById('pi-' + i).addEventListener('click', function() {
+    mostrarOpciones(i);
   });
+
+  // Eventos cantidades - totalmente independientes
   document.getElementById('pc-' + i).addEventListener('input', function() {
-    calcDiff(parseInt(this.getAttribute('data-idx')));
+    recalcular(i);
   });
   document.getElementById('pu-' + i).addEventListener('input', function() {
-    calcDiff(parseInt(this.getAttribute('data-idx')));
+    recalcular(i);
+  });
+
+  // Eliminar producto
+  d.querySelector('.btn-rm').addEventListener('click', function(e) {
+    e.stopPropagation();
+    rmProd(i);
   });
 
   renum();
@@ -314,47 +330,54 @@ function renum() {
   }
 }
 
-function filtrar(i) {
+function mostrarOpciones(i) {
   var inp = document.getElementById('pi-' + i);
-  var dr = document.getElementById('dr-' + i);
+  var dr  = document.getElementById('dr-' + i);
   if (!inp || !dr) return;
   var q = inp.value.toLowerCase().trim();
-  if (!q) { dr.classList.remove('open'); return; }
-
+  if (!q) { dr.style.display = 'none'; return; }
   var hits = [];
   for (var j = 0; j < INSUMOS.length; j++) {
     if (INSUMOS[j].toLowerCase().indexOf(q) !== -1) {
       hits.push(INSUMOS[j]);
-      if (hits.length >= 16) break;
+      if (hits.length >= 14) break;
     }
   }
-
-  var html = '';
+  if (!hits.length) { dr.style.display = 'none'; return; }
+  dr.innerHTML = '';
   for (var k = 0; k < hits.length; k++) {
-    var txt = hits[k];
-    var idx2 = txt.toLowerCase().indexOf(q);
-    var highlighted = txt.substring(0, idx2) +
-      '<strong style="color:#16a34a">' + txt.substring(idx2, idx2 + q.length) + '</strong>' +
-      txt.substring(idx2 + q.length);
-    html += '<div class="drop-item" data-val="' + hits[k].replace(/"/g, '&quot;') + '">' + highlighted + '</div>';
-  }
-
-  dr.innerHTML = html;
-  dr.classList.toggle('open', hits.length > 0);
-
-  var items = dr.querySelectorAll('.drop-item');
-  for (var m = 0; m < items.length; m++) {
-    items[m].addEventListener('mousedown', (function(val, idx3) {
+    var item = document.createElement('div');
+    item.textContent = hits[k];
+    item.style.cssText = 'padding:9px 14px;font-size:13px;cursor:pointer;border-bottom:1px solid #f0fdf4;color:#374151;';
+    item.addEventListener('mousedown', (function(val, idx) {
       return function(e) {
         e.preventDefault();
-        document.getElementById('pi-' + idx3).value = val;
-        document.getElementById('dr-' + idx3).classList.remove('open');
+        e.stopPropagation();
+        document.getElementById('pi-' + idx).value = val;
+        document.getElementById('dr-' + idx).style.display = 'none';
       };
-    })(items[m].getAttribute('data-val'), i));
+    })(hits[k], i));
+    item.addEventListener('mouseover', function() { this.style.background = '#f0fdf4'; this.style.color = '#16a34a'; });
+    item.addEventListener('mouseout',  function() { this.style.background = ''; this.style.color = '#374151'; });
+    dr.appendChild(item);
   }
+  dr.style.display = 'block';
 }
 
-function calcDiff(i) {
+// Cerrar dropdowns al hacer click fuera
+document.addEventListener('click', function(e) {
+  var cards = document.querySelectorAll('.prod-card');
+  for (var c = 0; c < cards.length; c++) {
+    var idx = cards[c].id.replace('pd-', '');
+    var dr = document.getElementById('dr-' + idx);
+    var pi = document.getElementById('pi-' + idx);
+    if (dr && pi && !pi.contains(e.target)) {
+      dr.style.display = 'none';
+    }
+  }
+});
+
+function recalcular(i) {
   var cEl = document.getElementById('pc-' + i);
   var uEl = document.getElementById('pu-' + i);
   var bEl = document.getElementById('pd-' + i);
@@ -366,6 +389,8 @@ function calcDiff(i) {
   bEl.textContent = d > 0 ? '+' + d.toFixed(2) : d.toFixed(2);
   bEl.style.color = d > 0 ? '#16a34a' : d < 0 ? '#ef4444' : '#d97706';
 }
+
+function calcDiff(i) { recalcular(i); }
 
 function checkSave() {
   var ok = document.getElementById('f-fecha').value &&
@@ -384,10 +409,8 @@ function guardar() {
   for (var ci = 0; ci < cards.length; ci++) {
     var idx = cards[ci].id.replace('pd-', '');
     var ins = (document.getElementById('pi-' + idx) || {}).value || '';
-    var car = (document.getElementById('pc-' + idx) || {}).value || '';
-    var uti = (document.getElementById('pu-' + idx) || {}).value || '';
-    car = car.replace(',', '.');
-    uti = uti.replace(',', '.');
+    var car = ((document.getElementById('pc-' + idx) || {}).value || '').replace(',', '.');
+    var uti = ((document.getElementById('pu-' + idx) || {}).value || '').replace(',', '.');
     if (ins || car || uti) prods.push({ ins: ins, car: car, uti: uti });
   }
   var reg = {
