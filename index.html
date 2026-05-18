@@ -97,8 +97,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.5;}
       </div>
     </div>
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('form',this)">+ Nueva Operación</button>
-      <button class="tab-btn" id="tab-hist" onclick="switchTab('hist',this)">Historial</button>
+      <button type="button" class="tab-btn active" onclick="switchTab('form',this)">+ Nueva Operación</button>
+      <button type="button" class="tab-btn" id="tab-hist" onclick="switchTab('hist',this)">Historial</button>
     </div>
   </div>
 </div>
@@ -126,15 +126,15 @@ textarea{resize:vertical;min-height:80px;line-height:1.5;}
     <div class="card">
       <div class="card-title"><span class="num-badge">03</span> Tipo de Aplicación</div>
       <div class="tipo-group">
-        <button class="tipo-btn" id="btn-total" onclick="setTipo('Total')">&#9632; Total</button>
-        <button class="tipo-btn" id="btn-sel" onclick="setTipo('Selectiva')">&#9670; Selectiva</button>
+        <button type="button" class="tipo-btn" id="btn-total" onclick="setTipo('Total')">&#9632; Total</button>
+        <button type="button" class="tipo-btn" id="btn-sel" onclick="setTipo('Selectiva')">&#9670; Selectiva</button>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title"><span class="num-badge">04</span> Productos</div>
       <div id="prods-wrap"></div>
-      <button class="btn-add-prod" id="btn-add-prod">+ Agregar producto</button>
+      <button type="button" class="btn-add-prod" id="btn-add-prod">+ Agregar producto</button>
     </div>
 
     <div class="card">
@@ -143,7 +143,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.5;}
       <textarea id="f-obs" placeholder="Condiciones climaticas, incidencias, notas de campo..."></textarea>
     </div>
 
-    <button class="btn-save" id="btn-save" disabled>Guardar Registro</button>
+    <button type="button" class="btn-save" id="btn-save" disabled>Guardar Registro</button>
     <p class="hint" id="hint">Completa fecha, lote y tipo de aplicacion para guardar</p>
   </div>
 
@@ -154,7 +154,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.5;}
         <select id="hist-filt" style="min-width:180px;" onchange="renderHist()">
           <option value="">Todos los lotes</option>
         </select>
-        <button class="btn-exp" id="btn-exp-all">&#8595; Exportar PDF</button>
+        <button type="button" class="btn-exp" id="btn-exp-all">&#8595; Exportar PDF</button>
       </div>
     </div>
     <div id="hist-wrap"></div>
@@ -257,7 +257,7 @@ function addProd() {
 
   var html = '';
   html += '<span class="prod-num" id="pn-' + i + '">#01</span>';
-  html += '<button class="btn-rm" data-idx="' + i + '">x</button>';
+  html += '<button type="button" class="btn-rm" data-idx="' + i + '">x</button>';
   html += '<div class="search-wrap" style="margin-bottom:14px">';
   html += '<label>Insumo / Producto</label>';
   html += '<input class="search-inp" id="pi-' + i + '" placeholder="Escribi para buscar..." autocomplete="off"/>';
@@ -492,8 +492,8 @@ function renderHist() {
         '<span class="badge ' + bc + '">' + r.tipo + '</span></div>' +
       tbl + obs +
       '<div class="reg-actions">' +
-        '<button class="btn-act btn-p" data-id="' + r.id + '">&#8595; PDF</button>' +
-        '<button class="btn-act btn-d" data-id="' + r.id + '">Eliminar</button>' +
+        '<button type="button" class="btn-act btn-p" data-id="' + r.id + '">&#8595; PDF</button>' +
+        '<button type="button" class="btn-act btn-d" data-id="' + r.id + '">Eliminar</button>' +
       '</div></div>';
   }
   w.innerHTML = html;
