@@ -279,41 +279,20 @@ function addProd() {
   d.querySelector('.btn-rm').addEventListener('click', function() {
     rmProd(parseInt(this.getAttribute('data-idx')));
   });
-  document.getElementById('pi-' + i).addEventListener('input', function() {
-    filtrar(i);
-  });
-  document.getElementById('pi-' + i).addEventListener('focus', function() {
-    filtrar(i);
-  });
-  document.getElementById('pi-' + i).addEventListener('blur', function() {
-    setTimeout(function() {
+  document.getElementById('pi-' + i).addEventListener('input', function() { filtrar(i); });
+  document.getElementById('pi-' + i).addEventListener('focus', function() { filtrar(i); });
+  // Cerrar dropdown solo si el foco sale FUERA de la tarjeta completa
+  d.addEventListener('focusout', function(e) {
+    if (!d.contains(e.relatedTarget)) {
       var dr = document.getElementById('dr-' + i);
       if (dr) dr.classList.remove('open');
-    }, 300);
+    }
   });
   document.getElementById('pc-' + i).addEventListener('input', function() {
     calcDiff(parseInt(this.getAttribute('data-idx')));
   });
-  document.getElementById('pc-' + i).addEventListener('focus', function() {
-    this.style.outline = 'none';
-    this.style.borderColor = '#15803d';
-    this.style.boxShadow = '0 0 0 3px rgba(22,163,74,.2)';
-  });
-  document.getElementById('pc-' + i).addEventListener('blur', function() {
-    this.style.boxShadow = 'none';
-    this.style.borderColor = '#16a34a';
-  });
   document.getElementById('pu-' + i).addEventListener('input', function() {
     calcDiff(parseInt(this.getAttribute('data-idx')));
-  });
-  document.getElementById('pu-' + i).addEventListener('focus', function() {
-    this.style.outline = 'none';
-    this.style.borderColor = '#15803d';
-    this.style.boxShadow = '0 0 0 3px rgba(22,163,74,.2)';
-  });
-  document.getElementById('pu-' + i).addEventListener('blur', function() {
-    this.style.boxShadow = 'none';
-    this.style.borderColor = '#16a34a';
   });
 
   renum();
