@@ -264,8 +264,8 @@ function addProd() {
   html += '<div class="drop" id="dr-' + i + '"></div>';
   html += '</div>';
   html += '<div class="grid-3">';
-  html += '<div><label>Cargado (L/kg)</label><input type="number" id="pc-' + i + '" placeholder="0.00" min="0" step="0.01" data-idx="' + i + '" class="inp-car"/></div>';
-  html += '<div><label>Utilizado (L/kg)</label><input type="number" id="pu-' + i + '" placeholder="0.00" min="0" step="0.01" data-idx="' + i + '" class="inp-uti"/></div>';
+  html += '<div><label>Cargado (L/kg)</label><input type="text" inputmode="decimal" id="pc-' + i + '" placeholder="0.00" data-idx="' + i + '" class="inp-car"/></div>';
+  html += '<div><label>Utilizado (L/kg)</label><input type="text" inputmode="decimal" id="pu-' + i + '" placeholder="0.00" data-idx="' + i + '" class="inp-uti"/></div>';
   html += '<div><label>Diferencia</label><div class="diff-display" id="pd-' + i + '">-</div></div>';
   html += '</div>';
   d.innerHTML = html;
@@ -359,8 +359,8 @@ function calcDiff(i) {
   var uEl = document.getElementById('pu-' + i);
   var bEl = document.getElementById('pd-' + i);
   if (!cEl || !uEl || !bEl) return;
-  var c = parseFloat(cEl.value);
-  var u = parseFloat(uEl.value);
+  var c = parseFloat(cEl.value.replace(',', '.'));
+  var u = parseFloat(uEl.value.replace(',', '.'));
   if (isNaN(c) || isNaN(u)) { bEl.textContent = '-'; bEl.style.color = '#9ca3af'; return; }
   var d = c - u;
   bEl.textContent = d > 0 ? '+' + d.toFixed(2) : d.toFixed(2);
@@ -386,6 +386,8 @@ function guardar() {
     var ins = (document.getElementById('pi-' + idx) || {}).value || '';
     var car = (document.getElementById('pc-' + idx) || {}).value || '';
     var uti = (document.getElementById('pu-' + idx) || {}).value || '';
+    car = car.replace(',', '.');
+    uti = uti.replace(',', '.');
     if (ins || car || uti) prods.push({ ins: ins, car: car, uti: uti });
   }
   var reg = {
