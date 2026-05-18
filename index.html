@@ -258,15 +258,18 @@ function addProd() {
   var html = '';
   html += '<span class="prod-num" id="pn-' + i + '">#01</span>';
   html += '<button class="btn-rm" data-idx="' + i + '">x</button>';
-  html += '<div class="search-wrap">';
+  html += '<div class="search-wrap" style="margin-bottom:14px">';
   html += '<label>Insumo / Producto</label>';
   html += '<input class="search-inp" id="pi-' + i + '" placeholder="Escribi para buscar..." autocomplete="off"/>';
   html += '<div class="drop" id="dr-' + i + '"></div>';
   html += '</div>';
-  html += '<div class="grid-3">';
-  html += '<div><label>Cargado (L/kg)</label><input type="text" inputmode="decimal" id="pc-' + i + '" placeholder="0.00" data-idx="' + i + '" class="inp-car"/></div>';
-  html += '<div><label>Utilizado (L/kg)</label><input type="text" inputmode="decimal" id="pu-' + i + '" placeholder="0.00" data-idx="' + i + '" class="inp-uti"/></div>';
-  html += '<div><label>Diferencia</label><div class="diff-display" id="pd-' + i + '">-</div></div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px">';
+  html += '<div><label style="margin-bottom:6px">Cargado (L/kg)</label>';
+  html += '<input type="tel" id="pc-' + i + '" placeholder="0.00" data-idx="' + i + '" class="inp-car" style="width:100%;background:#fff;border:2px solid #16a34a;border-radius:8px;padding:12px 14px;font-family:Inter,sans-serif;font-size:16px;color:#111827;-webkit-appearance:none"/></div>';
+  html += '<div><label style="margin-bottom:6px">Utilizado (L/kg)</label>';
+  html += '<input type="tel" id="pu-' + i + '" placeholder="0.00" data-idx="' + i + '" class="inp-uti" style="width:100%;background:#fff;border:2px solid #16a34a;border-radius:8px;padding:12px 14px;font-family:Inter,sans-serif;font-size:16px;color:#111827;-webkit-appearance:none"/></div>';
+  html += '<div><label style="margin-bottom:6px">Diferencia</label>';
+  html += '<div class="diff-display" id="pd-' + i + '" style="font-size:16px;font-weight:700;border:2px solid #e5e7eb">-</div></div>';
   html += '</div>';
   d.innerHTML = html;
 
@@ -286,13 +289,31 @@ function addProd() {
     setTimeout(function() {
       var dr = document.getElementById('dr-' + i);
       if (dr) dr.classList.remove('open');
-    }, 200);
+    }, 300);
   });
-  d.querySelector('.inp-car').addEventListener('input', function() {
+  document.getElementById('pc-' + i).addEventListener('input', function() {
     calcDiff(parseInt(this.getAttribute('data-idx')));
   });
-  d.querySelector('.inp-uti').addEventListener('input', function() {
+  document.getElementById('pc-' + i).addEventListener('focus', function() {
+    this.style.outline = 'none';
+    this.style.borderColor = '#15803d';
+    this.style.boxShadow = '0 0 0 3px rgba(22,163,74,.2)';
+  });
+  document.getElementById('pc-' + i).addEventListener('blur', function() {
+    this.style.boxShadow = 'none';
+    this.style.borderColor = '#16a34a';
+  });
+  document.getElementById('pu-' + i).addEventListener('input', function() {
     calcDiff(parseInt(this.getAttribute('data-idx')));
+  });
+  document.getElementById('pu-' + i).addEventListener('focus', function() {
+    this.style.outline = 'none';
+    this.style.borderColor = '#15803d';
+    this.style.boxShadow = '0 0 0 3px rgba(22,163,74,.2)';
+  });
+  document.getElementById('pu-' + i).addEventListener('blur', function() {
+    this.style.boxShadow = 'none';
+    this.style.borderColor = '#16a34a';
   });
 
   renum();
