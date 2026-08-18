@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LA JOSEFINA SRL - Registro de Operaciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f4f7f4;font-family:'Inter',sans-serif;color:#1a2e1a;font-size:14px;}
+.header{background:#fff;border-bottom:3px solid #16a34a;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:0 20px;}
+.hi{max-width:700px;margin:0 auto;}
+.brand-row{display:flex;align-items:center;gap:16px;padding:16px 0 12px;}
+.logo-img{width:60px;height:60px;object-fit:contain;}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#15803d;}
+.brand-sub{font-size:11px;color:#86b893;margin-top:2px;}
+.brand-title{font-size:12px;font-weight:600;color:#166534;margin-top:4px;padding-top:4px;border-top:1px solid #d1fae5;}
+.tabs{display:flex;border-top:1px solid #eee;}
+.tab{flex:1;cursor:pointer;border:none;background:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:11px;color:#6b7280;border-bottom:3px solid transparent;transition:all .2s;type:button;}
+.tab.on{color:#16a34a;border-bottom:3px solid #16a34a;}
+.main{max-width:700px;margin:0 auto;padding:20px;}
+.card{background:#fff;border:1px solid #d1fae5;border-radius:10px;padding:20px;margin-bottom:14px;}
+.ctit{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#16a34a;display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.nbadge{background:#f0fdf4;color:#22c55e;font-family:'Bebas Neue',sans-serif;font-size:22px;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.lbl{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:5px;}
+.inp{width:100%;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 14px;color:#111827;font-family:'Inter',sans-serif;font-size:14px;}
+.inp:focus{border-color:#16a34a;outline:none;background:#fff;}
+select.inp{background-color:#f9fafb;}
+textarea.inp{resize:vertical;min-height:80px;line-height:1.5;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.tipog{display:flex;gap:10px;}
+.tbtn{flex:1;padding:11px;border-radius:8px;border:1.5px solid #e5e7eb;background:#f9fafb;color:#6b7280;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-align:center;}
+.tbtn:hover{border-color:#16a34a;color:#16a34a;background:#f0fdf4;}
+.tbtn.tot{background:#f0fdf4;border-color:#16a34a;color:#15803d;}
+.tbtn.sel{background:#fffbeb;border-color:#d97706;color:#b45309;}
+.prodcard{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;overflow:visible;}
+.prodtop{padding:14px 14px 0 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.prodnr{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#86efac;}
+.btnrm{background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;color:#ef4444;font-size:12px;font-weight:600;padding:4px 10px;cursor:pointer;}
+.prodbusq{padding:0 14px 12px 14px;border-bottom:1px solid #e5e7eb;}
+.busqinp{width:100%;background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;color:#111827;}
+.busqinp:focus{border-color:#16a34a;outline:none;}
+.busqdrop{display:none;background:#fff;border:1.5px solid #16a34a;border-radius:8px;margin-top:4px;max-height:180px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,.12);}
+.busqitem{padding:9px 14px;font-size:13px;cursor:pointer;border-bottom:1px solid #f0fdf4;color:#374151;}
+.busqitem:hover{background:#f0fdf4;color:#16a34a;}
+.prodcants{padding:12px 14px 14px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.cantlbl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:5px;}
+.cantinp{width:100%;background:#fff;border:2px solid #86efac;border-radius:8px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;color:#111827;text-align:center;}
+.cantinp:focus{border-color:#16a34a;outline:none;box-shadow:0 0 0 3px rgba(22,163,74,.15);}
+.difbox{background:#f9fafb;border:2px solid #e5e7eb;border-radius:8px;padding:10px 12px;font-size:15px;font-weight:700;text-align:center;color:#9ca3af;min-height:43px;display:flex;align-items:center;justify-content:center;}
+.btnadd{width:100%;background:#f0fdf4;border:1.5px dashed #4ade80;border-radius:8px;color:#16a34a;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:10px;cursor:pointer;}
+.btnadd:hover{background:#dcfce7;}
+.btnsave{width:100%;background:linear-gradient(135deg,#15803d,#16a34a);border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:15px;cursor:pointer;}
+.btnsave:disabled{opacity:.4;cursor:not-allowed;}
+.hint{text-align:center;font-size:11px;color:#9ca3af;margin-top:8px;}
+.view{display:none;}.view.on{display:block;}
+.regcard{background:#fff;border:1px solid #d1fae5;border-radius:10px;padding:16px;margin-bottom:10px;}
+.reglote{font-weight:700;font-size:15px;color:#15803d;}
+.regmeta{font-size:11px;color:#9ca3af;margin-top:2px;}
+.badge{font-size:10px;font-weight:600;padding:4px 12px;border-radius:20px;}
+.bt{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.bs{background:#fef3c7;color:#b45309;border:1px solid #fcd34d;}
+.pth{display:grid;grid-template-columns:1fr 70px 70px 70px;gap:6px;font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;margin-bottom:4px;padding:0 4px;}
+.ptr{display:grid;grid-template-columns:1fr 70px 70px 70px;gap:6px;font-size:12px;padding:5px 4px;border-bottom:1px solid #f9fafb;align-items:center;}
+.obsblk{margin-top:10px;border-top:1px solid #f0fdf4;padding-top:10px;}
+.obstit{font-size:10px;font-weight:600;color:#16a34a;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.obstxt{font-size:12px;color:#4b5563;line-height:1.5;background:#f0fdf4;border-left:3px solid #4ade80;border-radius:0 6px 6px 0;padding:8px 12px;}
+.regact{display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #f0fdf4;}
+.bact{background:none;border:1.5px solid;border-radius:7px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:6px 14px;cursor:pointer;}
+.bpdf{border-color:#86efac;color:#15803d;}.bpdf:hover{background:#f0fdf4;}
+.bdel{border-color:#fca5a5;color:#ef4444;}.bdel:hover{background:#fef2f2;}
+.fbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+.bexp{background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;color:#15803d;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:8px 16px;cursor:pointer;}
+.empty{text-align:center;padding:50px 0;color:#9ca3af;}
+.etit{font-family:'Bebas Neue',sans-serif;font-size:44px;color:#d1fae5;margin-bottom:6px;}
+#toast{position:fixed;bottom:24px;right:24px;background:#15803d;border-radius:10px;padding:14px 24px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:9999;}
+#toast.on{opacity:1;}
+.ttit{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;letter-spacing:3px;}
+.tsub{font-size:10px;color:#bbf7d0;margin-top:2px;text-transform:uppercase;letter-spacing:2px;}
+</style>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getDatabase, ref, push, onValue, remove, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+    // CONFIG - el usuario pega sus datos aqui
+    const firebaseConfig = {
+      apiKey: "AIzaSyDzNalPBWQ9euT1MxAGqabr5uRu0lNR9Ks",
+  authDomain: "registro-prod-fito.firebaseapp.com",
+  databaseURL: "https://registro-prod-fito-default-rtdb.firebaseio.com",
+  projectId: "registro-prod-fito",
+  storageBucket: "registro-prod-fito.firebasestorage.app",
+  messagingSenderId: "738297117416",
+  appId: "1:738297117416:web:99949afaa74aa09a80275d",
+  measurementId: "G-GJDN64XHX9"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+    // Exponer funciones al scope global
+    window.fbPush = function(reg) {
+      return push(dbRef, reg);
+    };
+
+    window.fbDelete = function(fbKey) {
+      return remove(ref(db, 'registros/' + fbKey));
+    };
+
+    window.fbListen = function(callback) {
+      onValue(dbRef, function(snapshot) {
+        var lista = [];
+        snapshot.forEach(function(child) {
+          var r = child.val();
+          r._fbKey = child.key;
+          lista.push(r);
+        });
+        // Ordenar por fecha descendente
+        lista.sort(function(a,b){ return b.id - a.id; });
+        callback(lista);
+      });
+    };
+
+    // Importar registros locales (una sola vez)
+    window.importarLocales = function() {
+      var locales = JSON.parse(localStorage.getItem('lj_v4') || '[]');
+      if (!locales.length) {
+        alert('No hay registros locales para importar.');
+        return;
+      }
+      if (!confirm('Se van a importar ' + locales.length + ' registros a la nube. Continuar?')) return;
+      var promesas = locales.map(function(r) {
+        return push(dbRef, r);
+      });
+      Promise.all(promesas).then(function() {
+        localStorage.removeItem('lj_v4');
+        alert('Importacion completada. Los registros locales fueron eliminados.');
+      }).catch(function(e) {
+        alert('Error al importar: ' + e.message);
+      });
+    };
+
+    window.fbReady = true;
+    console.log('Firebase conectado');
+  </script>
+</head>
+<body>
+
+<div class="header">
+  <div class="hi">
+    <div class="brand-row">
+      <img class="logo-img" id="logo-img" src="" alt="La Josefina SRL"/>
+      <div>
+        <div class="brand-name">LA JOSEFINA SRL</div>
+        <div class="brand-sub">Campana 26 / 27</div>
+        <div class="brand-title">Registro de Operaciones</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button type="button" class="tab on" id="tab-form" onclick="showTab('form')">+ Nueva Operacion</button>
+      <button type="button" class="tab" id="tab-hist" onclick="showTab('hist')">Historial</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div id="view-form" class="view on">
+
+    <div class="card">
+      <div class="ctit"><span class="nbadge">01</span> Fecha y Horario</div>
+      <div class="g2">
+        <div><label class="lbl">Fecha</label><input type="date" class="inp" id="f-fecha"/></div>
+        <div><label class="lbl">Horario</label><input type="time" class="inp" id="f-horario"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ctit"><span class="nbadge">02</span> Lote</div>
+      <label class="lbl">Seleccionar lote</label>
+      <select class="inp" id="f-lote"><option value="">-- Elegir lote --</option></select>
+    </div>
+
+    <div class="card">
+      <div class="ctit"><span class="nbadge">03</span> Tipo de Aplicacion</div>
+      <div class="tipog">
+        <button type="button" class="tbtn" id="btn-tot" onclick="setTipo('Total')">Total</button>
+        <button type="button" class="tbtn" id="btn-sel" onclick="setTipo('Selectiva')">Selectiva</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ctit"><span class="nbadge">04</span> Productos</div>
+      <div id="prods-wrap"></div>
+      <button type="button" class="btnadd" onclick="agregarProd()">+ Agregar producto</button>
+    </div>
+
+    <div class="card">
+      <div class="ctit"><span class="nbadge">05</span> Observaciones</div>
+      <label class="lbl">Notas (opcional)</label>
+      <textarea class="inp" id="f-obs" placeholder="Condiciones climaticas, incidencias..."></textarea>
+    </div>
+
+    <button type="button" class="btnsave" id="btn-save" disabled onclick="guardar()">Guardar Registro</button>
+    <p class="hint" id="hint">Completa fecha, lote y tipo para guardar</p>
+
+  </div>
+
+  <div id="view-hist" class="view">
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px" id="import-banner">
+    <span style="font-size:12px;color:#b45309;font-weight:500">Tenes registros guardados localmente?</span>
+    <button type="button" onclick="if(window.importarLocales)window.importarLocales();else alert('Firebase no listo todavia, espera unos segundos.');" style="background:#d97706;border:none;border-radius:6px;color:#fff;font-family:Inter,sans-serif;font-size:11px;font-weight:600;padding:7px 14px;cursor:pointer">Importar a la nube</button>
+  </div>
+  <div class="fbar">
+      <span style="font-size:12px;color:#9ca3af;font-weight:500" id="hcnt">0 registros</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select class="inp" style="min-width:180px" id="hfilt" onchange="mostrarHist()"><option value="">Todos los lotes</option></select>
+        <button type="button" class="bexp" onclick="expTodos()">Exportar PDF</button>
+      </div>
+    </div>
+    <div id="hist-wrap"></div>
+  </div>
+
+</div>
+
+<div id="toast"><div class="ttit">OK</div><div class="tsub">Registro guardado</div></div>
+
+<script>
+var LOGO = 'data:image/jpeg;base64,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';
+document.getElementById('logo-img').src = LOGO;
+
+var LOTES = ["CIERI - CIELOTE1","COCO - COCL1","COCO - COCL2","COSME PARRA - CSML1","COSTA SACATE - CST L8","COSTA SACATE - CSTL1","COSTA SACATE - CSTL2","COSTA SACATE - CSTL3RIEGO","COSTA SACATE - CSTL4","COSTA SACATE - CSTL5","COSTA SACATE - CSTL6","GAIDO - GAIL1","GRANJA - GRAL1","GRANJA - GRAL2","GRANJA - GRAL3","GURGO - GURL1","LOZADA - LOZ L2","LOZADA - LOZL1","LOZADA - LOZL3","MALETTO - CSTL7MALETTO","MELLADO - MELL1","MELLADO - MELL2","MELLADO - MELL3","MELLADO - MELL4","MELLADO - MELL5","PAGIOTTA - PAGL1","PAGIOTTA - PAGL2","PAGIOTTA - PAGL3","PEPO - PEPL1","PEPO - PEPL2","PEPO - PEPL3","RINCON - RCNL1","RINCON - RCNL2","SERGIO - SERL1"];
+
+var INSUMOS = ["2,4D EHE AGROTERRUM","A 35 T ALCOHOL LINEAL ETOXILADO 35","A35T GOLD ALCOHOL LINEAL ETOXILADO 35","ACURON TM UNO","ADAMA ESSENTIALS IMATRON","ADAMA ESSENTIALS PASO 24 SL","ADAMA MAYORAL IMAZAPIR IMAZAPIC","AW 4927","BALBOA","BELT 48 SC","BIFEN ABL BIFENTRIN 25","BIOFILM ESTERES METILICOS","BISECT","BRV 8380 PWUE","BRV 8421 PWUE","BIOFILM SULFATO DE AMONIO","CAPAZ 50 SC","CARPITEC","CLETODIM AGROTERRUM 24","CONVEY","CORAGEN","CRIPTON XPRO BIXAFEN PROTIOCONAZOLE","CUBO","DISCO Y RASTRA","DK 6962 TRE","DK 7220 RR2 REFUGIO","DK 7272 TRE","DK 7447 TRE","DM 46I20","DM 49R19 STS","DOMINEX","DURANOR ADVANCE","ENETOTAL PROFERTIL","EXPEDITION SULFOXAFLOR LAMBDACIALOTRINA","FASTAC 10","FIGHTER PLUS","GALANT MAX","GESAPRIM 90 WDG ATRAZINA 90","GIBERELAC 10 SL","GRUMMAN PICLORAM 24","GUARDIAN","HEAT","HERBIFEN ADVANCE 2,4-D","IMAZETAPIR 10.6 SIGMA","INTERFIELD","KOPPERT BIO FORCE 3","KURAFOS 50 PIRIMIFOS METIL 50","LIGATE","LOOP NICOSULFURON 24","METOLACLOR 96 SUMMIT AGRO","MICROESSENTIALS SZ BUNGE","MICROSTAR PZ","MIRAVIS DUO","NK 842 VIPT3","NS 5421","NS 7624 CL VIPT3","NS 7800 TGCL","NS 7921 CL VIP3","OLIMPO MAX 3,6 ABAMECTINA","ONDUTY","OPTIMAT","P2021 PWUE","PANZER GOLD","PARAQUAT SIGMA","PICLORAM 24 RAINBOW","PICLORAM SIGMA","RIZO SPRAY SULFO","RIZOPACK 206","RIZOSPRAY EXTREMO","ROUNDUP CONTROL MAX","ROUNDUP FULL II","REFUGIO PIONNER","SELECT CLETODIM 24","SIGMA DICAMBA","SOLMIX","ST 9741CL CORTO","STICK ZINC ZINC","SULFATO DE CALCIO","SUMISOYA GEMMIT TOP FLUMIOXAZIM","SYRMA XTRA AZOXISTROBINA CIPROCONAZOLE","TOP ZINC MAX","UREA GRANULADA ASP","UREA PROTEGIDA NUTRIEN","YAG SULFATO DEL CALCIO","YARA VITA ZINTRAC"];
+
+var recs = []; // Los datos vienen de Firebase en tiempo real
+var pc = 0;
+var tipo = '';
+
+// Init
+window.onload = function() {
+  var s1 = document.getElementById('f-lote');
+  var s2 = document.getElementById('hfilt');
+  for (var i = 0; i < LOTES.length; i++) {
+    var o1 = document.createElement('option'); o1.value = LOTES[i]; o1.textContent = LOTES[i]; s1.appendChild(o1);
+    var o2 = document.createElement('option'); o2.value = LOTES[i]; o2.textContent = LOTES[i]; s2.appendChild(o2);
+  }
+  document.getElementById('f-fecha').value = new Date().toISOString().slice(0,10);
+  document.getElementById('f-lote').onchange = chkSave;
+  document.getElementById('f-fecha').oninput = chkSave;
+  agregarProd();
+
+  // Escuchar Firebase en tiempo real
+  var intentos = 0;
+  var esperar = setInterval(function() {
+    intentos++;
+    if (window.fbListen) {
+      clearInterval(esperar);
+      window.fbListen(function(lista) {
+        recs = lista;
+        updTab();
+        // Si el historial esta visible, refrescarlo
+        if (document.getElementById('view-hist').classList.contains('on')) {
+          mostrarHist();
+        }
+      });
+    } else if (intentos > 30) {
+      clearInterval(esperar);
+      document.getElementById('hint').textContent = 'Error: Firebase no conectado. Verifica la configuracion.';
+    }
+  }, 300);
+};
+
+function showTab(t) {
+  document.getElementById('view-form').className = 'view' + (t==='form'?' on':'');
+  document.getElementById('view-hist').className = 'view' + (t==='hist'?' on':'');
+  document.getElementById('tab-form').className = 'tab' + (t==='form'?' on':'');
+  document.getElementById('tab-hist').className = 'tab' + (t==='hist'?' on':'');
+  if (t === 'hist') mostrarHist();
+}
+
+function setTipo(t) {
+  tipo = t;
+  document.getElementById('btn-tot').className = 'tbtn' + (t==='Total'?' tot':'');
+  document.getElementById('btn-sel').className = 'tbtn' + (t==='Selectiva'?' sel':'');
+  chkSave();
+}
+
+function agregarProd() {
+  var idx = pc++;
+
+  var card = document.createElement('div');
+  card.className = 'prodcard';
+  card.id = 'pc-card-' + idx;
+
+  // Cabecera
+  var top = document.createElement('div');
+  top.className = 'prodtop';
+  var nr = document.createElement('span');
+  nr.className = 'prodnr';
+  nr.id = 'pnr-' + idx;
+  nr.textContent = '#01';
+  var btnrm = document.createElement('button');
+  btnrm.type = 'button';
+  btnrm.className = 'btnrm';
+  btnrm.textContent = 'Quitar';
+  btnrm.onclick = (function(n){ return function(){ quitarProd(n); }; })(idx);
+  top.appendChild(nr);
+  top.appendChild(btnrm);
+  card.appendChild(top);
+
+  // Buscador
+  var busqDiv = document.createElement('div');
+  busqDiv.className = 'prodbusq';
+  var busqLbl = document.createElement('span');
+  busqLbl.className = 'lbl';
+  busqLbl.textContent = 'Insumo / Producto';
+  var busqInp = document.createElement('input');
+  busqInp.type = 'text';
+  busqInp.className = 'busqinp';
+  busqInp.id = 'bi-' + idx;
+  busqInp.placeholder = 'Escribi para buscar...';
+  busqInp.autocomplete = 'off';
+  var drop = document.createElement('div');
+  drop.className = 'busqdrop';
+  drop.id = 'bd-' + idx;
+
+  busqInp.oninput = (function(n){ return function(){ buscar(n); }; })(idx);
+  busqInp.onclick = (function(n){ return function(){ buscar(n); }; })(idx);
+
+  busqDiv.appendChild(busqLbl);
+  busqDiv.appendChild(busqInp);
+  busqDiv.appendChild(drop);
+  card.appendChild(busqDiv);
+
+  // Cantidades - div separado, sin ninguna relacion con el buscador
+  var cDiv = document.createElement('div');
+  cDiv.className = 'prodcants';
+
+  // Cargado
+  var d1 = document.createElement('div');
+  var l1 = document.createElement('span'); l1.className = 'cantlbl'; l1.textContent = 'Cargado (L/kg)';
+  var i1 = document.createElement('input');
+  i1.type = 'text';
+  i1.className = 'cantinp';
+  i1.id = 'can-' + idx;
+  i1.placeholder = '0.00';
+  i1.oninput = (function(n){ return function(){ calcDif(n); }; })(idx);
+  d1.appendChild(l1); d1.appendChild(i1);
+
+  // Utilizado
+  var d2 = document.createElement('div');
+  var l2 = document.createElement('span'); l2.className = 'cantlbl'; l2.textContent = 'Utilizado (L/kg)';
+  var i2 = document.createElement('input');
+  i2.type = 'text';
+  i2.className = 'cantinp';
+  i2.id = 'uti-' + idx;
+  i2.placeholder = '0.00';
+  i2.oninput = (function(n){ return function(){ calcDif(n); }; })(idx);
+  d2.appendChild(l2); d2.appendChild(i2);
+
+  // Diferencia
+  var d3 = document.createElement('div');
+  var l3 = document.createElement('span'); l3.className = 'cantlbl'; l3.textContent = 'Diferencia';
+  var dif = document.createElement('div');
+  dif.className = 'difbox';
+  dif.id = 'dif-' + idx;
+  dif.textContent = '-';
+  d3.appendChild(l3); d3.appendChild(dif);
+
+  cDiv.appendChild(d1); cDiv.appendChild(d2); cDiv.appendChild(d3);
+  card.appendChild(cDiv);
+
+  document.getElementById('prods-wrap').appendChild(card);
+  renumerar();
+}
+
+function buscar(idx) {
+  var inp = document.getElementById('bi-' + idx);
+  var drop = document.getElementById('bd-' + idx);
+  if (!inp || !drop) return;
+  var q = inp.value.toLowerCase().trim();
+  drop.innerHTML = '';
+  if (!q) { drop.style.display = 'none'; return; }
+  var hits = [];
+  for (var j = 0; j < INSUMOS.length; j++) {
+    if (INSUMOS[j].toLowerCase().indexOf(q) !== -1) { hits.push(INSUMOS[j]); if (hits.length >= 14) break; }
+  }
+  if (!hits.length) { drop.style.display = 'none'; return; }
+  for (var k = 0; k < hits.length; k++) {
+    var item = document.createElement('div');
+    item.className = 'busqitem';
+    item.textContent = hits[k];
+    item.onmousedown = (function(val, n){ return function(e){ e.preventDefault(); document.getElementById('bi-'+n).value = val; document.getElementById('bd-'+n).style.display='none'; }; })(hits[k], idx);
+    drop.appendChild(item);
+  }
+  drop.style.display = 'block';
+}
+
+// Cerrar dropdowns al hacer click en cualquier otro lugar
+document.addEventListener('click', function(e) {
+  for (var n = 0; n < pc; n++) {
+    var bi = document.getElementById('bi-' + n);
+    var bd = document.getElementById('bd-' + n);
+    if (bi && bd && !bi.contains(e.target) && !bd.contains(e.target)) {
+      bd.style.display = 'none';
+    }
+  }
+});
+
+function calcDif(idx) {
+  var c = parseFloat((document.getElementById('can-'+idx)||{value:''}).value.replace(',','.'));
+  var u = parseFloat((document.getElementById('uti-'+idx)||{value:''}).value.replace(',','.'));
+  var box = document.getElementById('dif-'+idx);
+  if (!box) return;
+  if (isNaN(c) || isNaN(u)) { box.textContent = '-'; box.style.color = '#9ca3af'; return; }
+  var d = c - u;
+  box.textContent = d > 0 ? '+'+d.toFixed(2) : d.toFixed(2);
+  box.style.color = d > 0 ? '#16a34a' : d < 0 ? '#ef4444' : '#d97706';
+}
+
+function quitarProd(idx) {
+  var c = document.querySelectorAll('.prodcard');
+  if (c.length <= 1) return;
+  var el = document.getElementById('pc-card-' + idx);
+  if (el) el.remove();
+  renumerar();
+}
+
+function renumerar() {
+  var c = document.querySelectorAll('.prodcard');
+  for (var i = 0; i < c.length; i++) {
+    var n = c[i].querySelector('[id^="pnr-"]');
+    if (n) n.textContent = '#' + (i+1 < 10 ? '0'+(i+1) : ''+(i+1));
+  }
+}
+
+function chkSave() {
+  var ok = document.getElementById('f-fecha').value && document.getElementById('f-lote').value && tipo;
+  document.getElementById('btn-save').disabled = !ok;
+  document.getElementById('hint').style.display = ok ? 'none' : 'block';
+}
+
+function guardar() {
+  var prods = [];
+  var cards = document.querySelectorAll('.prodcard');
+  for (var ci = 0; ci < cards.length; ci++) {
+    var cid = cards[ci].id.replace('pc-card-','');
+    var ins = (document.getElementById('bi-'+cid)||{value:''}).value.trim();
+    var car = (document.getElementById('can-'+cid)||{value:''}).value.replace(',','.').trim();
+    var uti = (document.getElementById('uti-'+cid)||{value:''}).value.replace(',','.').trim();
+    if (ins || car || uti) prods.push({ins:ins,car:car,uti:uti});
+  }
+  var reg = {
+    id: Date.now(),
+    fecha: document.getElementById('f-fecha').value,
+    horario: document.getElementById('f-horario').value,
+    lote: document.getElementById('f-lote').value,
+    tipo: tipo, prods: prods,
+    obs: document.getElementById('f-obs').value.trim()
+  };
+  if (window.fbPush) {
+    window.fbPush(reg).then(function() {
+      showToast(); resetForm();
+    }).catch(function(e) {
+      alert('Error al guardar: ' + e.message);
+    });
+  } else {
+    alert('Firebase no conectado. Verifica la configuracion.');
+  }
+}
+
+function resetForm() {
+  document.getElementById('f-fecha').value = new Date().toISOString().slice(0,10);
+  document.getElementById('f-horario').value = '';
+  document.getElementById('f-lote').value = '';
+  document.getElementById('f-obs').value = '';
+  tipo = '';
+  document.getElementById('btn-tot').className = 'tbtn';
+  document.getElementById('btn-sel').className = 'tbtn';
+  document.getElementById('prods-wrap').innerHTML = '';
+  pc = 0; agregarProd(); chkSave();
+}
+
+function showToast() {
+  var t = document.getElementById('toast');
+  t.classList.add('on');
+  setTimeout(function(){ t.classList.remove('on'); }, 2000);
+}
+
+function updTab() {
+  document.getElementById('tab-hist').textContent = 'Historial' + (recs.length ? ' ('+recs.length+')' : '');
+}
+
+function mostrarHist() {
+  var f = document.getElementById('hfilt').value;
+  var list = f ? recs.filter(function(r){ return r.lote===f; }) : recs;
+  document.getElementById('hcnt').textContent = list.length + ' registro' + (list.length!==1?'s':'');
+  var w = document.getElementById('hist-wrap');
+  if (!list.length) {
+    w.innerHTML = '<div class="empty"><div class="etit">SIN DATOS</div><p>'+(f?'No hay registros para este lote':'Todavia no hay registros guardados')+'</p></div>';
+    return;
+  }
+  var html = '';
+  for (var ri = 0; ri < list.length; ri++) {
+    var r = list[ri];
+    var hora = r.horario ? ' - ' + r.horario + 'hs' : '';
+    var bc = r.tipo==='Total' ? 'bt' : 'bs';
+    var prows = '';
+    var fp = (r.prods||[]).filter(function(p){ return p.ins; });
+    for (var pi = 0; pi < fp.length; pi++) {
+      var p = fp[pi];
+      var c = parseFloat(p.car), u = parseFloat(p.uti);
+      var d = (!isNaN(c)&&!isNaN(u)) ? (c-u) : null;
+      var dc = d===null?'#9ca3af':d>0?'#16a34a':d<0?'#ef4444':'#d97706';
+      var dv = d===null?'-':d>0?'+'+d.toFixed(2):d.toFixed(2);
+      prows += '<div class="ptr"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.ins+'</span>'
+        +'<span style="text-align:center;color:#6b7280">'+(p.car||'-')+'</span>'
+        +'<span style="text-align:center;color:#6b7280">'+(p.uti||'-')+'</span>'
+        +'<span style="text-align:center;font-weight:700;color:'+dc+'">'+dv+'</span></div>';
+    }
+    var tbl = prows ? '<div style="margin-top:10px;border-top:1px solid #f0fdf4;padding-top:8px">'
+      +'<div class="pth"><span>Producto</span><span style="text-align:center">Cargado</span>'
+      +'<span style="text-align:center">Utilizado</span><span style="text-align:center">Diferencia</span></div>'
+      +prows+'</div>' : '';
+    var obs = r.obs ? '<div class="obsblk"><div class="obstit">Observaciones</div>'
+      +'<div class="obstxt">'+r.obs.replace(/\n/g,'<br>')+'</div></div>' : '';
+    html += '<div class="regcard">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+      +'<div><div class="reglote">'+r.lote+'</div><div class="regmeta">'+r.fecha+hora+'</div></div>'
+      +'<span class="badge '+bc+'">'+r.tipo+'</span></div>'
+      +tbl+obs
+      +'<div class="regact">'
+      +'<button type="button" class="bact bpdf" data-id="'+r.id+'">PDF</button>'
+      +'<button type="button" class="bact bdel" data-id="'+r.id+'">Eliminar</button>'
+      +'</div></div>';
+  }
+  w.innerHTML = html;
+  var pb = w.querySelectorAll('.bpdf');
+  for (var bi=0; bi<pb.length; bi++) pb[bi].onclick = (function(id){ return function(){ expUno(id); }; })(parseInt(pb[bi].getAttribute('data-id')));
+  var db = w.querySelectorAll('.bdel');
+  for (var di=0; di<db.length; di++) db[di].onclick = (function(id){ return function(){ eliminar(id); }; })(parseInt(db[di].getAttribute('data-id')));
+}
+
+function eliminar(id) {
+  if (!confirm('Eliminar este registro?')) return;
+  var r = recs.find(function(x){ return x.id === id; });
+  if (r && r._fbKey && window.fbDelete) {
+    window.fbDelete(r._fbKey).catch(function(e){ alert('Error: ' + e.message); });
+  }
+}
+
+function mkPDF(list) {
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({unit:'mm',format:'a4'});
+  var pw = doc.internal.pageSize.getWidth();
+  for (var ri=0; ri<list.length; ri++) {
+    var r = list[ri];
+    if (ri>0) doc.addPage();
+    doc.setFillColor(22,101,52); doc.rect(0,0,pw,34,'F');
+    try { doc.addImage(LOGO,'JPEG',8,5,22,22); } catch(e){}
+    doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor(255,255,255);
+    doc.text('LA JOSEFINA SRL',34,13);
+    doc.setFontSize(8); doc.setTextColor(187,247,208);
+    doc.text('Registro de Operaciones - Campana 26/27',34,20);
+    doc.setDrawColor(74,222,128); doc.setLineWidth(0.3); doc.line(8,28,pw-8,28);
+    doc.setFillColor(240,253,244); doc.roundedRect(8,38,pw-16,24,2,2,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(22,101,52);
+    doc.text(r.lote,14,48);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,116,100);
+    doc.text('Fecha: '+r.fecha+(r.horario?' - '+r.horario+'hs':''),14,56);
+    doc.setFont('helvetica','bold');
+    doc.text('Tipo: '+r.tipo,14,62);
+    var fp=(r.prods||[]).filter(function(p){return p.ins;});
+    if (fp.length>0) {
+      doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(22,101,52);
+      doc.text('PRODUCTOS',14,74);
+      var rows=[];
+      for (var pi=0;pi<fp.length;pi++) {
+        var p=fp[pi],c=parseFloat(p.car),u=parseFloat(p.uti);
+        var d=(!isNaN(c)&&!isNaN(u))?(c-u):null;
+        rows.push([p.ins,p.car||'-',p.uti||'-',d===null?'-':d>0?'+'+d.toFixed(2):d.toFixed(2)]);
+      }
+      doc.autoTable({startY:77,head:[['Producto','Cargado','Utilizado','Diferencia']],body:rows,
+        theme:'grid',headStyles:{fillColor:[22,101,52],textColor:[255,255,255],fontSize:8,fontStyle:'bold'},
+        bodyStyles:{fontSize:8,textColor:[55,65,81]},alternateRowStyles:{fillColor:[240,253,244]},
+        columnStyles:{1:{cellWidth:28,halign:'center'},2:{cellWidth:28,halign:'center'},3:{cellWidth:24,halign:'center'}},
+        margin:{left:8,right:8},
+        didParseCell:function(d){if(d.section==='body'&&d.column.index===3){var v=d.cell.raw;if(v&&v[0]==='+')d.cell.styles.textColor=[22,101,52];else if(v&&v!=='-')d.cell.styles.textColor=[220,38,38];}}
+      });
+    }
+    if (r.obs) {
+      var y=fp.length>0?doc.lastAutoTable.finalY+8:74;
+      var lines=doc.splitTextToSize(r.obs,pw-36);
+      doc.setFillColor(240,253,244);doc.setDrawColor(74,222,128);doc.setLineWidth(0.3);
+      doc.roundedRect(8,y,pw-16,14+lines.length*5,2,2,'FD');
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(22,101,52);
+      doc.text('OBSERVACIONES',14,y+7);
+      doc.setFont('helvetica','normal');doc.setTextColor(75,85,99);
+      doc.text(lines,14,y+13);
+    }
+    var fy=doc.internal.pageSize.getHeight()-8;
+    doc.setFillColor(22,101,52);doc.rect(0,fy-4,pw,12,'F');
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(187,247,208);
+    doc.text('La Josefina SRL - Registro de Operaciones - Campana 26/27',pw/2,fy+2,{align:'center'});
+  }
+  return doc;
+}
+
+function expUno(id) {
+  var r=null; for(var i=0;i<recs.length;i++){if(recs[i].id===id){r=recs[i];break;}}
+  if(!r)return;
+  mkPDF([r]).save('LJ_'+r.lote.replace(/[^a-zA-Z0-9]/g,'_')+'_'+r.fecha+'.pdf');
+}
+function expTodos() {
+  if(!recs.length){alert('No hay registros.');return;}
+  var f=document.getElementById('hfilt').value;
+  var list=f?recs.filter(function(r){return r.lote===f;}):recs;
+  if(!list.length){alert('No hay registros con el filtro.');return;}
+  mkPDF(list).save('LJ_Registros_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
+</script>
+</body>
+</html>
